@@ -1,100 +1,17 @@
 package com.ecommerce;
 
-import com.ecommerce.SmartECommerceApplication;
-import com.ecommerce.controller.LoginController;
-import com.ecommerce.controller.DashboardController;
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
-
-import java.io.IOException;
+import com.ecommerce.ui.FrontendApplication;
 
 /**
- * MainApp is the entry point for the Smart E-Commerce System.
- * Refactored to use FXML for a professional separation of concerns.
+ * Backward-compatible JavaFX launcher.
+ * The actual frontend runtime now lives in {@link FrontendApplication}.
  */
-public class MainApp extends Application {
+public final class MainApp {
 
-    private Stage primaryStage;
-    private Scene mainScene;
-    private ConfigurableApplicationContext springContext;
-
-    @Override
-    public void init() throws Exception {
-        // Start Spring Application Context in the same JVM
-        springContext = SpringApplication.run(SmartECommerceApplication.class);
-    }
-
-    @Override
-    public void start(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-        primaryStage.setTitle("Smart E-Commerce System");
-
-        showLogin();
-
-        primaryStage.setMinWidth(900);
-        primaryStage.setMinHeight(600);
-        primaryStage.centerOnScreen();
-        primaryStage.show();
-    }
-
-    private void showLogin() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
-            Parent root = loader.load();
-            
-            LoginController controller = loader.getController();
-            controller.setOnLoginSuccess(this::showDashboard);
-            
-            if (mainScene == null) {
-                mainScene = new Scene(root, 1050, 700);
-                applyStyles(mainScene);
-                primaryStage.setScene(mainScene);
-            } else {
-                mainScene.setRoot(root);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void showDashboard() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/dashboard.fxml"));
-            Parent root = loader.load();
-            
-            DashboardController controller = loader.getController();
-            controller.setOnLogout(this::showLogin);
-            
-            mainScene.setRoot(root);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void applyStyles(Scene scene) {
-        String cssPath = getClass().getResource("/css/styles.css") != null
-            ? getClass().getResource("/css/styles.css").toExternalForm()
-            : null;
-        if (cssPath != null) {
-            scene.getStylesheets().add(cssPath);
-        }
-    }
-
-    @Override
-    public void stop() {
-        if (springContext != null) {
-            springContext.close();
-        }
-        Platform.exit();
+    private MainApp() {
     }
 
     public static void main(String[] args) {
-        launch(args);
+        FrontendApplication.main(args);
     }
 }

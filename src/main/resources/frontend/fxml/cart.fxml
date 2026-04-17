@@ -10,10 +10,8 @@
         <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
     </padding>
 
-    <!-- Header -->
     <Label styleClass="content-title" text="🛒  Your Shopping Cart" />
 
-    <!-- Search & Sort Bar -->
     <HBox alignment="CENTER_LEFT" spacing="15.0">
         <padding>
             <Insets bottom="10.0" />
@@ -23,12 +21,10 @@
         <Button onAction="#loadCart" styleClass="button-primary" text="🔄 Refresh" />
     </HBox>
 
-    <!-- Items Container -->
     <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent; -fx-border-color: transparent;" VBox.vgrow="ALWAYS">
         <VBox fx:id="itemsContainer" spacing="15.0" />
     </ScrollPane>
 
-    <!-- Footer / Summary -->
     <HBox alignment="CENTER_RIGHT" spacing="20.0">
         <padding>
             <Insets top="20.0" />

@@ -52,6 +52,18 @@ export PROD_DB_PASSWORD=prod_pass
 mvn spring-boot:run -Dspring-boot.run.profiles=prod
 ```
 
+### Running Backend and Frontend Separately
+
+```bash
+# Terminal 1: backend API server (REST/GraphQL on port 8080)
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+
+# Terminal 2: JavaFX frontend only
+mvn javafx:run
+```
+
+`javafx:run` now starts a non-web Spring context for UI wiring and does not start the embedded web server.
+
 ---
 
 ## API Endpoints

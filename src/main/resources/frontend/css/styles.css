@@ -1,0 +1,175 @@
+/* ========================================================
+   Smart E-Commerce System — Dark Mode Professional Theme
+   ======================================================== */
+
+/* === Global Root Styles === */
+.root {
+    -fx-background-color: #1e1e2f;
+    -fx-font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: #ffffff; /* Default bright text */
+}
+
+.main-content {
+    -fx-background-color: #1e1e2f;
+    -fx-padding: 30;
+}
+
+.content-title {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.content-subtitle {
+    -fx-text-fill: #888aa0;
+    -fx-font-size: 13px;
+}
+
+.label {
+    -fx-text-fill: #c0c8e0;
+}
+
+.label-bright {
+    -fx-text-fill: #ffffff;
+}
+
+.label-muted {
+    -fx-text-fill: #666680;
+}
+
+.text-field, .text-area, .password-field {
+    -fx-background-color: #2a2a44;
+    -fx-text-fill: #e0e0f0;
+    -fx-prompt-text-fill: #555572;
+    -fx-border-color: #3a3a5a;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 8 12;
+    -fx-highlight-fill: #4a6ea9;
+    -fx-highlight-text-fill: #ffffff;
+}
+
+.text-field:focused, .text-area:focused, .password-field:focused {
+    -fx-border-color: #4a6ea9;
+    -fx-effect: dropshadow(gaussian, rgba(74, 110, 169, 0.3), 8, 0, 0, 0);
+}
+
+.combo-box {
+    -fx-background-color: #2a2a44;
+    -fx-border-color: #3a3a5a;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 4 8;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: #e0e0f0;
+    -fx-background-color: #2a2a44;
+}
+
+.button {
+    -fx-background-color: #3a3a5a;
+    -fx-text-fill: #e0e0f0;
+    -fx-padding: 8 18;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-font-weight: normal;
+}
+
+.button:hover {
+    -fx-background-color: #4a4a6a;
+}
+
+.button-primary {
+    -fx-background-color: linear-gradient(to bottom, #4a6ea9, #3d5c8a);
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+}
+
+.button-success {
+    -fx-background-color: linear-gradient(to bottom, #2e9b5a, #257a48);
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+}
+
+.button-danger {
+    -fx-background-color: linear-gradient(to bottom, #c94444, #a83636);
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+}
+
+.table-view {
+    -fx-background-color: #22223a;
+    -fx-border-color: #2a2a44;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #1a1a30;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: #22223a;
+    -fx-border-color: transparent transparent #2a2a44 transparent;
+}
+
+.table-view .table-row-cell:odd {
+    -fx-background-color: #262644;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: #3a4a70;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: #ffffff;
+    -fx-padding: 8 12;
+}
+
+.card {
+    -fx-background-color: #22223a;
+    -fx-border-color: #2a2a44;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 3);
+}
+
+.pagination-bar {
+    -fx-background-color: #22223a;
+    -fx-border-color: #2a2a44;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10 20;
+}
+
+.page-label {
+    -fx-text-fill: #888aa0;
+    -fx-font-size: 13px;
+}
+
+.form-label {
+    -fx-text-fill: #a0a8c0;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.content-scroll-pane {
+    -fx-background-color: #1e1e2f;
+    -fx-background: #1e1e2f;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.content-scroll-pane .viewport {
+    -fx-background-color: #1e1e2f;
+}
