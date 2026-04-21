@@ -56,7 +56,18 @@ mvn spring-boot:run -Dspring-boot.run.profiles=prod
 
 ```bash
 # Terminal 1: backend API server (REST/GraphQL on port 8080)
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
+
+## Default dev (already active in application.yml)
+mvn spring-boot:run
+
+## Force dev explicitly
+mvn spring-boot:run "-Dspring-boot.run.profiles=dev"
+
+## Test
+mvn spring-boot:run "-Dspring-boot.run.profiles=test"
+
+## Prod
+mvn spring-boot:run "-Dspring-boot.run.profiles=prod"
 
 # Terminal 2: JavaFX frontend only
 mvn javafx:run

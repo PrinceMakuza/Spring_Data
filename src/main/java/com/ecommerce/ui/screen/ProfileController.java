@@ -1,4 +1,4 @@
-package com.ecommerce.controller;
+package com.ecommerce.ui.screen;
 
 import com.ecommerce.service.AuthService;
 import com.ecommerce.util.SpringContextBridge;

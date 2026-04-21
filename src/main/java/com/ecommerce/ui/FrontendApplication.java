@@ -1,8 +1,8 @@
 package com.ecommerce.ui;
 
 import com.ecommerce.SmartECommerceApplication;
-import com.ecommerce.controller.DashboardController;
-import com.ecommerce.controller.LoginController;
+import com.ecommerce.ui.screen.DashboardController;
+import com.ecommerce.ui.screen.LoginController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -49,7 +49,7 @@ public class FrontendApplication extends Application {
 
     private void showLogin() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/frontend/fxml/login.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
             Parent root = loader.load();
 
             LoginController controller = loader.getController();
@@ -69,7 +69,7 @@ public class FrontendApplication extends Application {
 
     private void showDashboard() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/frontend/fxml/dashboard.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/dashboard.fxml"));
             Parent root = loader.load();
 
             DashboardController controller = loader.getController();
@@ -82,8 +82,8 @@ public class FrontendApplication extends Application {
     }
 
     private void applyStyles(Scene scene) {
-        String cssPath = getClass().getResource("/frontend/css/styles.css") != null
-            ? getClass().getResource("/frontend/css/styles.css").toExternalForm()
+        String cssPath = getClass().getResource("/css/styles.css") != null
+            ? getClass().getResource("/css/styles.css").toExternalForm()
             : null;
         if (cssPath != null) {
             scene.getStylesheets().add(cssPath);

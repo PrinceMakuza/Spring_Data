@@ -22,7 +22,7 @@ import java.util.Optional;
  * Integrates Spring Caching and Jpa Specifications for high performance.
  */
 @Service("springProductService")
-public class SpringProductService {
+public class SpringProductService implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 

@@ -17,11 +17,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/categories")
 @Tag(name = "Categories", description = "Category management APIs")
-public class CategoryRestController {
+public class CategoryController {
 
     private final CategoryService categoryService;
 
-    public CategoryRestController(CategoryService categoryService) {
+    public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
 

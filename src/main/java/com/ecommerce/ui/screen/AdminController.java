@@ -1,11 +1,11 @@
-package com.ecommerce.controller;
+package com.ecommerce.ui.screen;
 
 import com.ecommerce.model.Category;
 import com.ecommerce.model.Product;
 import com.ecommerce.model.User;
 import com.ecommerce.model.Order;
 import com.ecommerce.model.Review;
-import com.ecommerce.service.SpringProductService;
+import com.ecommerce.service.ProductService;
 import com.ecommerce.service.CategoryService;
 import com.ecommerce.service.UserService;
 import com.ecommerce.service.OrderService;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  * Updated to fully implement search and sort logic across all management panels.
  */
 public class AdminController {
-    private final SpringProductService productService = SpringContextBridge.getBean(SpringProductService.class);
+    private final ProductService productService = SpringContextBridge.getBean(ProductService.class);
     private final CategoryService categoryService = SpringContextBridge.getBean(CategoryService.class);
     private final UserService userService = SpringContextBridge.getBean(UserService.class);
     private final OrderService orderService = SpringContextBridge.getBean(OrderService.class);

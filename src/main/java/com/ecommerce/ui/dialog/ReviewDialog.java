@@ -1,4 +1,4 @@
-package com.ecommerce.controller;
+package com.ecommerce.ui.dialog;
 
 import com.ecommerce.model.Review;
 import com.ecommerce.model.Product;
@@ -104,7 +104,7 @@ public class ReviewDialog {
         loadReviews(reviewsBox);
 
         Scene scene = new Scene(root, 500, 600);
-        scene.getStylesheets().add(getClass().getResource("/frontend/css/styles.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
         stage.setScene(scene);
         stage.show();
     }

@@ -1,249 +1,98 @@
 package com.ecommerce.controller;
 
-import com.ecommerce.model.Category;
+import com.ecommerce.dto.ApiResponse;
+import com.ecommerce.dto.ProductDTO;
+import com.ecommerce.dto.request.ProductRequest;
+import com.ecommerce.dto.response.ProductResponse;
 import com.ecommerce.model.Product;
-import com.ecommerce.service.SpringProductService;
-import com.ecommerce.service.CategoryService;
-import com.ecommerce.service.CartService;
-import com.ecommerce.util.SpringContextBridge;
-import com.ecommerce.util.PerformanceMonitor;
-import com.ecommerce.util.UserContext;
-import com.ecommerce.util.DataEventBus;
-import com.ecommerce.controller.ReviewDialog;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.geometry.Pos;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import java.util.List;
-import java.util.Optional;
+import com.ecommerce.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-/**
- * ProductController manages the customer-facing product browsing view.
- * Now features real-time synchronization and improved quantity selection.
- */
+@RestController
+@RequestMapping("/api/products")
+@Tag(name = "Products", description = "Product management APIs")
 public class ProductController {
-    private final SpringProductService productService = SpringContextBridge.getBean(SpringProductService.class);
-    private final CartService cartService = SpringContextBridge.getBean(CartService.class);
-    private final CategoryService categoryService = SpringContextBridge.getBean(CategoryService.class);
-    
-    @FXML private TableView<Product> productTable;
-    @FXML private TextField searchField;
-    @FXML private ComboBox<String> categoryFilter;
-    @FXML private ComboBox<String> sortCombo;
-    @FXML private Label pageLabel;
-    @FXML private Label resultCountLabel;
-    @FXML private Label timingLabel;
-    
-    private final ObservableList<Product> productList = FXCollections.observableArrayList();
-    private int currentPage = 1;
-    private final int pageSize = 500;
-    private int totalProducts = 0;
-    private List<Category> categories;
 
-    @FXML
-    public void initialize() {
-        setupTable();
-        loadInitialData();
-        
-        // Subscribe to real-time events
-        DataEventBus.subscribe(this::loadData);
-        
-        // Listeners for instant filtering
-        categoryFilter.setOnAction(e -> handleSearch());
-        sortCombo.setOnAction(e -> handleSearch());
-        searchField.textProperty().addListener((o, ov, nv) -> handleSearch());
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
-    private void setupTable() {
-        TableColumn<Product, String> nameCol = new TableColumn<>("Product Name");
-        nameCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getName()));
-        nameCol.setPrefWidth(220);
-
-        TableColumn<Product, String> priceCol = new TableColumn<>("Price");
-        priceCol.setCellValueFactory(d -> new SimpleStringProperty(String.format("$%.2f", d.getValue().getPrice())));
-        priceCol.setPrefWidth(100);
-        priceCol.setStyle("-fx-alignment: CENTER-RIGHT;");
-
-        TableColumn<Product, String> catCol = new TableColumn<>("Category");
-        catCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCategoryName()));
-        catCol.setPrefWidth(140);
-
-        TableColumn<Product, String> stockCol = new TableColumn<>("In Stock");
-        stockCol.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getStockQuantity())));
-        stockCol.setPrefWidth(100);
-        stockCol.setCellFactory(column -> new TableCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setStyle("");
-                } else {
-                    setText(item);
-                    int stock = Integer.parseInt(item);
-                    if (stock <= 0) setStyle("-fx-text-fill: #e05555; -fx-font-weight: bold;");
-                    else if (stock < 5) setStyle("-fx-text-fill: #fbbf24; -fx-font-weight: bold;");
-                    else setStyle("-fx-text-fill: #38b86c; -fx-font-weight: bold;");
-                }
-            }
-        });
-
-        TableColumn<Product, Void> actionCol = new TableColumn<>("Action");
-        actionCol.setPrefWidth(120);
-        actionCol.setCellFactory(param -> new TableCell<Product, Void>() {
-            private final Button cartBtn = new Button("Add to Cart");
-            {
-                cartBtn.getStyleClass().add("button-success");
-                cartBtn.setStyle("-fx-font-size: 11px; -fx-padding: 5 10;");
-                cartBtn.setOnAction(event -> handleAddToCart(getTableView().getItems().get(getIndex())));
-            }
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) setGraphic(null);
-                else {
-                    HBox container = new HBox(cartBtn);
-                    container.setAlignment(Pos.CENTER);
-                    setGraphic(container);
-                }
-            }
-        });
-
-        TableColumn<Product, Product> ratingCol = new TableColumn<>("Rating");
-        ratingCol.setPrefWidth(160);
-        ratingCol.setCellValueFactory(d -> new SimpleObjectProperty<>(d.getValue()));
-        ratingCol.setCellFactory(param -> new TableCell<Product, Product>() {
-            private final Label starLabel = new Label();
-            private final Button rateBtn = new Button("⭐ Rate");
-            private final HBox container = new HBox(10);
-            {
-                starLabel.setStyle("-fx-text-fill: #ffcc00; -fx-font-weight: bold;");
-                rateBtn.getStyleClass().add("button-primary");
-                rateBtn.setStyle("-fx-font-size: 10px; -fx-padding: 3 8;");
-                container.setAlignment(Pos.CENTER_LEFT);
-                container.getChildren().addAll(starLabel, rateBtn);
-            }
-            @Override
-            protected void updateItem(Product p, boolean empty) {
-                super.updateItem(p, empty);
-                if (empty || p == null) setGraphic(null);
-                else {
-                    starLabel.setText(p.getRatingStars());
-                    rateBtn.setOnAction(e -> new ReviewDialog(p.getProductId(), p.getName()).show());
-                    setGraphic(container);
-                }
-            }
-        });
-
-        productTable.getColumns().setAll(nameCol, priceCol, catCol, stockCol, actionCol, ratingCol);
-        productTable.setItems(productList);
+    @GetMapping
+    @Operation(summary = "List products with pagination, sorting, and filtering")
+    public ResponseEntity<ApiResponse<Page<ProductResponse>>> getProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice) {
+        Page<ProductResponse> products = productService
+            .getProducts(page, size, sortBy, sortDir, name, categoryId, minPrice, maxPrice)
+            .map(this::toResponse);
+        return ResponseEntity.ok(ApiResponse.success("Products retrieved successfully", products));
     }
 
-    private void loadInitialData() {
-        try {
-            categories = categoryService.getAllCategories();
-            categoryFilter.getItems().clear();
-            categoryFilter.getItems().add("All Categories");
-            for (Category cat : categories) categoryFilter.getItems().add(cat.getName());
-            categoryFilter.setValue("All Categories");
-            
-            sortCombo.getItems().setAll("Name (A-Z)", "Name (Z-A)", "Price (Low to High)", "Price (High to Low)");
-            sortCombo.setValue("Name (A-Z)");
-            
-            loadData();
-        } catch (Exception e) {}
+    @GetMapping("/{id}")
+    @Operation(summary = "Get product by ID")
+    public ResponseEntity<ApiResponse<ProductResponse>> getProductById(@PathVariable int id) {
+        return productService.getProductById(id)
+                .map(p -> ResponseEntity.ok(ApiResponse.success("Product found", toResponse(p))))
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.error("Product not found", null)));
     }
 
-    private void loadData() {
-        PerformanceMonitor.start("ProductSearch");
-        try {
-            String search = searchField.getText();
-            String sortBy = "name", dir = "asc";
-            String sortVal = sortCombo.getValue();
-            if ("Name (Z-A)".equals(sortVal)) dir = "desc";
-            else if ("Price (Low to High)".equals(sortVal)) sortBy = "price";
-            else if ("Price (High to Low)".equals(sortVal)) { sortBy = "price"; dir = "desc"; }
-
-            var page = productService.getProducts(currentPage - 1, pageSize, sortBy, dir, search, getSelectedCategoryId(), null, null);
-            productList.setAll(page.getContent());
-            totalProducts = (int) page.getTotalElements();
-            
-            updatePaginationUI();
-            resultCountLabel.setText("Showing " + productList.size() + " products");
-            timingLabel.setText("Fetched in " + PerformanceMonitor.stop("ProductSearch") + "ms");
-        } catch (Exception e) {}
+    @PostMapping
+    @Operation(summary = "Create a new product")
+    public ResponseEntity<ApiResponse<ProductResponse>> createProduct(@Valid @RequestBody ProductRequest request) {
+        Product created = productService.createProduct(toDto(request));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success("Product created successfully", toResponse(created)));
     }
 
-    private Integer getSelectedCategoryId() {
-        String selected = categoryFilter.getValue();
-        if (selected == null || "All Categories".equals(selected)) return null;
-        return categories.stream().filter(c -> c.getName().equals(selected)).findFirst().map(Category::getCategoryId).orElse(null);
+    @PutMapping("/{id}")
+    @Operation(summary = "Update an existing product")
+    public ResponseEntity<ApiResponse<ProductResponse>> updateProduct(@PathVariable int id, @Valid @RequestBody ProductRequest request) {
+        Product updated = productService.updateProduct(id, toDto(request));
+        return ResponseEntity.ok(ApiResponse.success("Product updated successfully", toResponse(updated)));
     }
 
-    private void updatePaginationUI() {
-        int totalPages = Math.max(1, (int) Math.ceil((double) totalProducts / pageSize));
-        pageLabel.setText(String.format("Page %d of %d", currentPage, totalPages));
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a product")
+    public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable int id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.ok(ApiResponse.success("Product deleted successfully", null));
     }
 
-    @FXML
-    private void handleSearch() {
-        currentPage = 1;
-        loadData();
+    private ProductDTO toDto(ProductRequest request) {
+        return new ProductDTO(
+            null,
+            request.getName(),
+            request.getDescription(),
+            request.getPrice(),
+            request.getCategoryId(),
+            request.getStockQuantity()
+        );
     }
 
-    @FXML
-    private void handleClearFilters() {
-        searchField.clear();
-        categoryFilter.setValue("All Categories");
-        handleSearch();
-    }
-
-    @FXML
-    private void handlePrevPage() { if (currentPage > 1) { currentPage--; loadData(); } }
-    @FXML
-    private void handleNextPage() {
-        int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
-        if (currentPage < totalPages) { currentPage++; loadData(); }
-    }
-
-    private void handleAddToCart(Product product) {
-        if (product.getStockQuantity() <= 0) {
-            showError("Out of Stock", "This item is currently unavailable.");
-            return;
-        }
-
-        TextInputDialog dialog = new TextInputDialog("1");
-        dialog.setTitle("Select Quantity");
-        dialog.setHeaderText("Add " + product.getName() + " to Cart");
-        dialog.setContentText("Please enter quantity:");
-
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(qtyStr -> {
-            try {
-                int qty = Integer.parseInt(qtyStr);
-                if (qty <= 0 || qty > product.getStockQuantity()) {
-                    showError("Invalid Quantity", "Current stock: " + product.getStockQuantity());
-                    return;
-                }
-                cartService.addToCart(UserContext.getCurrentUserId(), product.getProductId(), qty);
-                showInfo("Added", qty + " unit(s) of " + product.getName() + " added to your cart!");
-            } catch (NumberFormatException e) {
-                showError("Input Error", "Please enter a valid number.");
-            }
-        });
-    }
-
-    private void showInfo(String title, String msg) {
-        Alert a = new Alert(Alert.AlertType.INFORMATION, msg);
-        a.setTitle(title); a.setHeaderText(null); a.show();
-    }
-
-    private void showError(String title, String msg) {
-        Alert a = new Alert(Alert.AlertType.ERROR, msg);
-        a.setTitle(title); a.show();
+    private ProductResponse toResponse(Product product) {
+        ProductResponse response = new ProductResponse();
+        response.setProductId(product.getProductId());
+        response.setName(product.getName());
+        response.setDescription(product.getDescription());
+        response.setPrice(product.getPrice());
+        response.setCategoryId(product.getCategoryId());
+        response.setCategoryName(product.getCategoryName());
+        response.setStockQuantity(product.getStockQuantity());
+        return response;
     }
 }

@@ -7,7 +7,7 @@ import com.ecommerce.model.User;
 import com.ecommerce.repository.ProductRepository;
 import com.ecommerce.repository.UserRepository;
 import com.ecommerce.repository.OrderRepository;
-import com.ecommerce.service.SpringProductService;
+import com.ecommerce.service.ProductService;
 import com.ecommerce.service.CartService;
 import com.ecommerce.service.OrderService;
 import com.ecommerce.service.CategoryService;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  */
 public class ReportGenerator {
 
-    private final SpringProductService productService = SpringContextBridge.getBean(SpringProductService.class);
+    private final ProductService productService = SpringContextBridge.getBean(ProductService.class);
     private final ProductRepository productRepo = SpringContextBridge.getBean(ProductRepository.class);
     private final UserRepository userRepo = SpringContextBridge.getBean(UserRepository.class);
     private final OrderRepository orderRepo = SpringContextBridge.getBean(OrderRepository.class);

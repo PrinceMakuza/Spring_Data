@@ -2,7 +2,7 @@ package com.ecommerce.graphql;
 
 import com.ecommerce.dto.ProductDTO;
 import com.ecommerce.model.Product;
-import com.ecommerce.service.SpringProductService;
+import com.ecommerce.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -15,9 +15,9 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class ProductResolver {
 
-    private final SpringProductService productService;
+    private final ProductService productService;
 
-    public ProductResolver(SpringProductService productService) {
+    public ProductResolver(ProductService productService) {
         this.productService = productService;
     }
 

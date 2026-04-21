@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="20.0" styleClass="main-content" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ecommerce.controller.AdminController">
+<VBox spacing="20.0" styleClass="main-content" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ecommerce.ui.screen.AdminController">
     <!-- Header -->
     <VBox spacing="5.0">
         <Label styleClass="content-title, label-bright" text="⚙  System Administration" style="-fx-font-size: 26px; -fx-font-weight: bold;" />

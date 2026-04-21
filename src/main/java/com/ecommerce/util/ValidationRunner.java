@@ -4,7 +4,7 @@ import com.ecommerce.model.Product;
 import com.ecommerce.model.Category;
 import com.ecommerce.repository.ProductRepository;
 import com.ecommerce.service.CartService;
-import com.ecommerce.service.SpringProductService;
+import com.ecommerce.service.ProductService;
 import com.ecommerce.service.CategoryService;
 import com.ecommerce.dto.ProductDTO;
 
@@ -16,7 +16,7 @@ import java.util.List;
  * Refactored to use Spring-managed services.
  */
 public class ValidationRunner {
-    private static final SpringProductService productService = SpringContextBridge.getBean(SpringProductService.class);
+    private static final ProductService productService = SpringContextBridge.getBean(ProductService.class);
     private static final CartService cartService = SpringContextBridge.getBean(CartService.class);
     private static final ProductRepository productRepo = SpringContextBridge.getBean(ProductRepository.class);
     private static final CategoryService categoryService = SpringContextBridge.getBean(CategoryService.class);

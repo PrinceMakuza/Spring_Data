@@ -1,4 +1,4 @@
-package com.ecommerce.controller;
+package com.ecommerce.ui.screen;
 
 import com.ecommerce.model.Order;
 import com.ecommerce.model.OrderItem;

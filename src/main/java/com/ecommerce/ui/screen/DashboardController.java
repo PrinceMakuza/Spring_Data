@@ -1,4 +1,4 @@
-package com.ecommerce.controller;
+package com.ecommerce.ui.screen;
 
 import com.ecommerce.util.UserContext;
 import javafx.fxml.FXML;
@@ -37,7 +37,7 @@ public class DashboardController {
         
         try {
             if (UserContext.isAdmin()) {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/frontend/fxml/admin.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin.fxml"));
                 contentHolder.getChildren().add(loader.load());
             } else if (UserContext.isCustomer()) {
                 setupCustomerTabs();
@@ -52,24 +52,24 @@ public class DashboardController {
         TabPane tabPane = new TabPane();
         
         // Tab 1: Products
-        FXMLLoader prodLoader = new FXMLLoader(getClass().getResource("/frontend/fxml/products.fxml"));
+        FXMLLoader prodLoader = new FXMLLoader(getClass().getResource("/fxml/products.fxml"));
         Tab browseTab = new Tab("📦  Browse Products", prodLoader.load());
         browseTab.setClosable(false);
         
         // Tab 2: Cart
-        FXMLLoader cartLoader = new FXMLLoader(getClass().getResource("/frontend/fxml/cart.fxml"));
+        FXMLLoader cartLoader = new FXMLLoader(getClass().getResource("/fxml/cart.fxml"));
         Tab cartTab = new Tab("🛒  My Cart", cartLoader.load());
         CartController cartController = cartLoader.getController();
         cartTab.setClosable(false);
         
         // Tab 3: History
-        FXMLLoader historyLoader = new FXMLLoader(getClass().getResource("/frontend/fxml/orders.fxml"));
+        FXMLLoader historyLoader = new FXMLLoader(getClass().getResource("/fxml/orders.fxml"));
         Tab historyTab = new Tab("📜  Order History", historyLoader.load());
         OrderHistoryController historyController = historyLoader.getController();
         historyTab.setClosable(false);
 
         // Tab 4: Profile
-        FXMLLoader profileLoader = new FXMLLoader(getClass().getResource("/frontend/fxml/profile.fxml"));
+        FXMLLoader profileLoader = new FXMLLoader(getClass().getResource("/fxml/profile.fxml"));
         Tab profileTab = new Tab("👤  Profile", profileLoader.load());
         profileTab.setClosable(false);
 
