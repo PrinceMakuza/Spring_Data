@@ -8,7 +8,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @SpringBootApplication
 @EnableAspectJAutoProxy
-@EnableAutoConfiguration
 @EnableCaching
 public class SmartECommerceApplication {
     public static void main(String[] args) {

@@ -42,23 +42,24 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        System.out.println("[DataInitializer] Initializing CLEAN START...");
+        System.out.println("[DataInitializer] Checking database state...");
         
-        // Clear in order of dependencies
-        reviewRepository.deleteAll();
-        orderRepository.deleteAll(); // Cascades to OrderItems
-        cartItemRepository.deleteAll();
-        productRepository.deleteAll();
-        userRepository.deleteAll();
-        categoryRepository.deleteAll();
-        
-        System.out.println("[DataInitializer] Database cleared. Seeding fresh data...");
+        if (categoryRepository.count() == 0) {
+            System.out.println("[DataInitializer] No categories found. Seeding categories...");
+            seedCategories();
+        }
 
-        seedCategories();
-        seedUsers();
-        seedProducts();
+        if (userRepository.count() == 0) {
+            System.out.println("[DataInitializer] No users found. Seeding users...");
+            seedUsers();
+        }
 
-        System.out.println("[DataInitializer] Cleanup and seeding complete.");
+        if (productRepository.count() == 0) {
+            System.out.println("[DataInitializer] No products found. Seeding products...");
+            seedProducts();
+        }
+
+        System.out.println("[DataInitializer] Initialization check complete.");
     }
 
     private void seedCategories() {

@@ -1,7 +1,10 @@
 package com.ecommerce.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Category model representing a product category in the ecommerce system.
@@ -29,6 +32,10 @@ public class Category {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Product> products = new ArrayList<>();
+
     public Category() {}
 
     public Category(int categoryId, String name, String description) {
@@ -48,6 +55,9 @@ public class Category {
     public void setDescription(String description) { this.description = description; }
 
     public java.time.LocalDateTime getCreatedAt() { return createdAt; }
+
+    public List<Product> getProducts() { return products; }
+    public void setProducts(List<Product> products) { this.products = products; }
 
     @Override
     public String toString() {

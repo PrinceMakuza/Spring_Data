@@ -12,6 +12,12 @@ type Query {
 
     # Fetch all users
     users: [User!]!
+
+    # Fetch all orders (admin view)
+    orders: [Order!]!
+
+    # Fetch cart for a specific user
+    myCart(userId: ID!): [CartItem!]!
 }
 
 type Mutation {
@@ -39,6 +45,7 @@ type Category {
     categoryId: ID!
     name: String!
     description: String
+    products: [Product!]!
     createdAt: String
 }
 
@@ -48,16 +55,44 @@ type User {
     email: String!
     role: String
     location: String
+    orders: [Order!]!
+    cart: [CartItem!]!
     createdAt: String
+}
+
+type Order {
+    orderId: ID!
+    user: User!
+    orderDate: String
+    totalAmount: Float!
+    status: String
+    items: [OrderItem!]!
+}
+
+type OrderItem {
+    orderItemId: ID!
+    product: Product!
+    quantity: Int!
+    unitPrice: Float!
+}
+
+type CartItem {
+    cartItemId: ID!
+    user: User!
+    product: Product!
+    quantity: Int!
+    unitPrice: Float!
+    addedAt: String
 }
 
 type ProductPage {
     content: [Product!]!
     totalPages: Int!
-    totalElements: Int!
+    totalElements: Float!
     number: Int!
     size: Int!
 }
+
 
 input ProductInput {
     name: String!

@@ -43,7 +43,7 @@ public class UserService {
         user.setName(userDTO.name());
         user.setEmail(userDTO.email());
         user.setRole(userDTO.role());
-        user.setPassword(userDTO.password()); // In a real app, hash this
+        user.setPassword(userDTO.password());
         user.setLocation(userDTO.location());
         return userRepository.save(user);
     }

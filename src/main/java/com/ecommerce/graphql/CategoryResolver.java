@@ -1,8 +1,10 @@
 package com.ecommerce.graphql;
 
 import com.ecommerce.model.Category;
+import com.ecommerce.model.Product;
 import com.ecommerce.service.CategoryService;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -22,5 +24,10 @@ public class CategoryResolver {
     @QueryMapping
     public List<Category> categories() {
         return categoryService.getAllCategories();
+    }
+
+    @SchemaMapping
+    public List<Product> products(Category category) {
+        return category.getProducts();
     }
 }

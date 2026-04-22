@@ -49,11 +49,61 @@
         return response.json().catch(() => response.text());
     };
 
+    const defaultQuery = `{
+  # 1. Product & Category Relationship
+  categories {
+    name
+    products {
+      name
+      price
+    }
+  }
+
+  # 2. User, Orders & Cart Relationship
+  users {
+    name
+    email
+    orders {
+      orderId
+      totalAmount
+      status
+      items {
+        product { name }
+        quantity
+      }
+    }
+    cart {
+      product { name }
+      quantity
+    }
+  }
+
+  # 3. Direct All Orders Query
+  orders {
+    orderId
+    user { name }
+    items {
+      product { name }
+      quantity
+    }
+  }
+}`;
+
     const root = ReactDOM.createRoot(document.getElementById('graphiql'));
+    
+    // Clear previous cached query to ensure our default is visible
+    if (!localStorage.getItem('graphiql:query')) {
+        localStorage.setItem('graphiql:query', defaultQuery);
+    }
+
     root.render(
         React.createElement(GraphiQL, { 
             fetcher: graphQLFetcher,
             defaultEditorToolsVisibility: true,
+            query: localStorage.getItem('graphiql:query') || defaultQuery,
+            onEditQuery: (newQuery) => {
+                localStorage.setItem('graphiql:query', newQuery);
+            },
             header: React.createElement(GraphiQL.Header, null, "Smart E-Commerce API Explorer")
         })
     );

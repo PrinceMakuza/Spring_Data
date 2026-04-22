@@ -85,7 +85,7 @@ http://localhost:8080/graphql
 ```
 ### GraphiQL Interactive Explorer
 ```
-http://localhost:8080/graphiql?path=/graphql
+http://localhost:8080/graphiql
 ```
 
 ## REST API Reference

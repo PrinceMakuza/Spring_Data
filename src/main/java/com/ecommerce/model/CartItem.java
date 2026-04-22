@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
  * CartItem model representing an item in a user's shopping cart.
  */
 @Entity
-@Table(name = "cart_items")
+@Table(name = "cartitems")
 public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

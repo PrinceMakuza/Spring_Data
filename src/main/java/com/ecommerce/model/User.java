@@ -1,7 +1,10 @@
 package com.ecommerce.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User model representing a system user with RBAC.
@@ -39,6 +42,14 @@ public class User {
 
     private String location;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Order> orders = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<CartItem> cartItems = new ArrayList<>();
+
     public User() {}
 
     public User(int userId, String name, String email, String role, String location) {
@@ -68,4 +79,10 @@ public class User {
     public void setLocation(String location) { this.location = location; }
 
     public java.time.LocalDateTime getCreatedAt() { return createdAt; }
+
+    public List<Order> getOrders() { return orders; }
+    public void setOrders(List<Order> orders) { this.orders = orders; }
+
+    public List<CartItem> getCartItems() { return cartItems; }
+    public void setCartItems(List<CartItem> cartItems) { this.cartItems = cartItems; }
 }

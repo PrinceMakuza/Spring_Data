@@ -6,7 +6,7 @@ import jakarta.persistence.*;
  * OrderItem model representing an individual product within an order.
  */
 @Entity
-@Table(name = "order_items")
+@Table(name = "orderitems")
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
