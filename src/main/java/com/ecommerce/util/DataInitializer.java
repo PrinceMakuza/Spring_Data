@@ -49,9 +49,14 @@ public class DataInitializer implements CommandLineRunner {
             seedCategories();
         }
 
-        if (userRepository.count() == 0) {
-            System.out.println("[DataInitializer] No users found. Seeding users...");
-            seedUsers();
+        if (!userRepository.existsByEmail("admin@ecommerce.com")) {
+            System.out.println("[DataInitializer] Admin user missing. Seeding default admin...");
+            seedAdmin();
+        }
+
+        if (userRepository.count() < 2) {
+            System.out.println("[DataInitializer] Insufficient sample users. Seeding default customer...");
+            seedCustomer();
         }
 
         if (productRepository.count() == 0) {
@@ -71,8 +76,7 @@ public class DataInitializer implements CommandLineRunner {
         ));
     }
 
-    private void seedUsers() {
-        // Default Admin
+    private void seedAdmin() {
         User admin = new User();
         admin.setName("System Admin");
         admin.setEmail("admin@ecommerce.com");
@@ -80,8 +84,10 @@ public class DataInitializer implements CommandLineRunner {
         admin.setRole("ADMIN");
         admin.setLocation("Headquarters");
         userRepository.save(admin);
+        System.out.println("[DataInitializer] Default admin created: admin@ecommerce.com / admin123");
+    }
 
-        // Default Customer
+    private void seedCustomer() {
         User customer = new User();
         customer.setName("John Doe");
         customer.setEmail("john@example.com");
@@ -89,6 +95,7 @@ public class DataInitializer implements CommandLineRunner {
         customer.setRole("CUSTOMER");
         customer.setLocation("Accra, Ghana");
         userRepository.save(customer);
+        System.out.println("[DataInitializer] Sample customer created: john@example.com / password123");
     }
 
     private void seedProducts() {
