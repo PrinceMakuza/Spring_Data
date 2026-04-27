@@ -24,6 +24,11 @@ public class FrontendApplication extends Application {
     private Stage primaryStage;
     private Scene mainScene;
     private ConfigurableApplicationContext springContext;
+    private static FrontendApplication instance;
+
+    public static FrontendApplication getInstance() {
+        return instance;
+    }
 
     @Override
     public void init() {
@@ -36,6 +41,7 @@ public class FrontendApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        instance = this;
         this.primaryStage = primaryStage;
         primaryStage.setTitle("Smart E-Commerce System");
 

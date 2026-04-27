@@ -13,6 +13,7 @@ import com.ecommerce.repository.ReviewRepository;
 import com.ecommerce.util.SpringContextBridge;
 import com.ecommerce.util.DataEventBus;
 import com.ecommerce.service.ReportService;
+import com.ecommerce.ui.FrontendApplication;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -308,17 +309,47 @@ public class AdminController {
         VBox reportBox = new VBox(20); reportBox.setAlignment(Pos.CENTER); reportBox.setMaxWidth(500); reportBox.setPadding(new Insets(40));
         reportBox.setStyle("-fx-background-color: #1e1e1e; -fx-background-radius: 15; -fx-border-color: #333; -fx-border-radius: 15;");
 
+        Label reportTitle = new Label("System Analytics & APIs");
+        reportTitle.getStyleClass().add("content-title");
+        reportTitle.setStyle("-fx-padding: 0 0 10 0;");
+
         Button perfBtn = new Button("🚀 Generate Performance Report"); perfBtn.getStyleClass().add("button-primary");
         Button valBtn = new Button("✅ Generate Validation Report"); valBtn.getStyleClass().add("button-success");
         Button docBtn = new Button("📚 Generate System Documentation"); docBtn.getStyleClass().add("button-primary");
+        
+        Separator sep = new Separator();
+        sep.setPadding(new Insets(10, 0, 10, 0));
+
+        Label apiTitle = new Label("Developer Tools");
+        apiTitle.getStyleClass().add("content-subtitle");
+
+        Button swaggerBtn = new Button("🌐 Swagger");
+        swaggerBtn.getStyleClass().add("button-secondary");
+        swaggerBtn.setPrefWidth(300);
+        swaggerBtn.setOnAction(e -> openUrl("http://localhost:8080/swagger-ui/index.html"));
+
+        Button graphqlBtn = new Button("📊 GraphQL");
+        graphqlBtn.getStyleClass().add("button-secondary");
+        graphqlBtn.setPrefWidth(300);
+        graphqlBtn.setOnAction(e -> openUrl("http://localhost:8080/graphiql.html"));
+
         ProgressIndicator progress = new ProgressIndicator(); progress.setVisible(false);
 
         perfBtn.setOnAction(e -> runReportTask("Performance Report", () -> reportService.generatePerformanceReport(), progress));
         valBtn.setOnAction(e -> runReportTask("Validation Report", () -> reportService.generateValidationReport(), progress));
         docBtn.setOnAction(e -> runReportTask("System Documentation", () -> reportService.generateSystemDocumentation(), progress));
-        reportBox.getChildren().addAll(perfBtn, valBtn, docBtn, progress);
+        
+        reportBox.getChildren().addAll(reportTitle, perfBtn, valBtn, docBtn, sep, apiTitle, swaggerBtn, graphqlBtn, progress);
         panel.getChildren().addAll(reportBox);
         return panel;
+    }
+
+    private void openUrl(String url) {
+        try {
+            FrontendApplication.getInstance().getHostServices().showDocument(url);
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Browser Error", "Could not open URL: " + url + "\nError: " + e.getMessage());
+        }
     }
 
     private void runReportTask(String title, ReportTask task, ProgressIndicator progress) {
