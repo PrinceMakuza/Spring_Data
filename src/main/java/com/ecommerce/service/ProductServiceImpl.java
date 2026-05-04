@@ -7,14 +7,17 @@ import com.ecommerce.repository.CategoryRepository;
 import com.ecommerce.repository.ProductRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -72,7 +75,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Transactional
-    @org.springframework.cache.annotation.Caching(evict = {
+    @Caching(evict = {
         @CacheEvict(value = "product", key = "#id"),
         @CacheEvict(value = "products", allEntries = true)
     })
@@ -94,7 +97,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Transactional
-    @org.springframework.cache.annotation.Caching(evict = {
+    @Caching(evict = {
         @CacheEvict(value = "product", key = "#id"),
         @CacheEvict(value = "products", allEntries = true)
     })
@@ -103,9 +106,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @CacheEvict(value = "products", allEntries = true)
-    public void batchUpdatePrices(java.util.List<Integer> ids, double percentage) {
+    public void batchUpdatePrices(List<Integer> ids, double percentage) {
         for (Integer id : ids) {
             Product product = productRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Product not found: " + id));

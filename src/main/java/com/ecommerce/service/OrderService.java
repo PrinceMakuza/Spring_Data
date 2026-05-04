@@ -7,6 +7,8 @@ import com.ecommerce.model.User;
 import com.ecommerce.repository.OrderRepository;
 import com.ecommerce.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -58,8 +60,8 @@ public class OrderService {
      * Creates a new order with stock validation and decrement.
      * READ_COMMITTED isolation prevents dirty reads.
      */
-    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRED,
-                   isolation = org.springframework.transaction.annotation.Isolation.READ_COMMITTED,
+    @Transactional(propagation = Propagation.REQUIRED,
+                   isolation = Isolation.READ_COMMITTED,
                    rollbackFor = Exception.class)
     @CacheEvict(value = "users", allEntries = true) // Simplification: evict users cache or targeted history if defined
     public Order createOrder(int userId, List<Integer> productIds, List<Integer> quantities) {
@@ -112,13 +114,11 @@ public class OrderService {
     /**
      * Updates order status in a new transaction.
      */
-    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Order updateOrderStatus(int orderId, String status) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         order.setStatus(status);
-        
-        // Conceptually publish event here...
         
         return orderRepository.save(order);
     }
