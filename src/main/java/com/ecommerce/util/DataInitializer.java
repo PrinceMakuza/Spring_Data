@@ -30,6 +30,10 @@ public class DataInitializer implements CommandLineRunner {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @jakarta.annotation.Nullable
+    @org.springframework.beans.factory.annotation.Value("${app.db.init:false}")
+    private boolean shouldInit;
+
     public DataInitializer(UserRepository userRepository,
                            CategoryRepository categoryRepository,
                            ProductRepository productRepository,
@@ -47,6 +51,10 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
+        if (!shouldInit) {
+            System.out.println("[DataInitializer] DB initialization skipped (app.db.init=false)");
+            return;
+        }
         System.out.println("[DataInitializer] Starting database re-initialization...");
         
         try {

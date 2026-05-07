@@ -2,6 +2,7 @@ package com.ecommerce.service;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 
 import com.ecommerce.dto.CategoryDTO;
 import com.ecommerce.model.Category;
@@ -56,7 +57,10 @@ public class CategoryService {
     }
 
     @Transactional
-    @CacheEvict(value = "categories", allEntries = true)
+    @Caching(evict = {
+        @CacheEvict(value = "categories", allEntries = true),
+        @CacheEvict(value = "products", allEntries = true)
+    })
     public Category updateCategory(int id, CategoryDTO dto) {
         return categoryRepository.findById(id).map(cat -> {
             cat.setName(dto.name());
@@ -66,7 +70,10 @@ public class CategoryService {
     }
 
     @Transactional
-    @CacheEvict(value = "categories", allEntries = true)
+    @Caching(evict = {
+        @CacheEvict(value = "categories", allEntries = true),
+        @CacheEvict(value = "products", allEntries = true)
+    })
     public void deleteCategory(int id) {
         categoryRepository.deleteById(id);
     }

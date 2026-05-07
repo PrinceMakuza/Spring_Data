@@ -1,6 +1,7 @@
 package com.ecommerce.service;
 
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 
 import com.ecommerce.model.Order;
 import com.ecommerce.model.User;
@@ -63,7 +64,11 @@ public class OrderService {
     @Transactional(propagation = Propagation.REQUIRED,
                    isolation = Isolation.READ_COMMITTED,
                    rollbackFor = Exception.class)
-    @CacheEvict(value = "users", allEntries = true) // Simplification: evict users cache or targeted history if defined
+    @Caching(evict = {
+        @CacheEvict(value = "users", allEntries = true),
+        @CacheEvict(value = "products", allEntries = true),
+        @CacheEvict(value = "product", allEntries = true)
+    })
     public Order createOrder(int userId, List<Integer> productIds, List<Integer> quantities) {
         com.ecommerce.model.User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));

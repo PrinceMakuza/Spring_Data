@@ -8,6 +8,7 @@ import com.ecommerce.model.User;
 import com.ecommerce.repository.*;
 import com.ecommerce.util.DataEventBus;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +44,10 @@ public class CartService {
     }
 
     @Transactional
+    @Caching(evict = {
+        @CacheEvict(value = "products", allEntries = true),
+        @CacheEvict(value = "product", key = "#productId")
+    })
     public void addToCart(int userId, int productId, int quantity) {
         System.out.println("DEBUG: Service.addToCart - User: " + userId + ", Product: " + productId);
         User user = userRepository.findById(userId)
@@ -91,6 +96,10 @@ public class CartService {
     }
 
     @Transactional
+    @Caching(evict = {
+        @CacheEvict(value = "products", allEntries = true),
+        @CacheEvict(value = "product", allEntries = true)
+    })
     public void updateQuantity(int cartItemId, int quantity) {
         cartItemRepository.findById(cartItemId).ifPresent(item -> {
             Product product = item.getProduct();
@@ -112,6 +121,10 @@ public class CartService {
     }
 
     @Transactional
+    @Caching(evict = {
+        @CacheEvict(value = "products", allEntries = true),
+        @CacheEvict(value = "product", allEntries = true)
+    })
     public void removeFromCart(int cartItemId) {
         cartItemRepository.findById(cartItemId).ifPresent(item -> {
             Product product = item.getProduct();
@@ -181,5 +194,10 @@ public class CartService {
             order.getItems().add(orderItem);
         }
         orderRepository.save(order);
+    }
+
+    public void invalidateAllCaches() {
+        userCarts.clear();
+        System.out.println("DEBUG: Service.invalidateAllCaches - Manual userCarts cache cleared.");
     }
 }

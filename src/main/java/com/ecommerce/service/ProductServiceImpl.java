@@ -31,6 +31,7 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final CartService cartService;
 
     /**
      * Retrieve products with filtering, sorting, and pagination.
@@ -77,6 +78,7 @@ public class ProductServiceImpl implements ProductService {
         @CacheEvict(value = "products", allEntries = true)
     })
     public Product updateProduct(int id, ProductDTO dto) {
+        cartService.invalidateAllCaches();
         return productRepository.findById(id).map(product -> {
             product.setName(dto.name());
             product.setDescription(dto.description());
@@ -99,13 +101,18 @@ public class ProductServiceImpl implements ProductService {
         @CacheEvict(value = "products", allEntries = true)
     })
     public void deleteProduct(int id) {
+        cartService.invalidateAllCaches();
         productRepository.deleteById(id);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    @CacheEvict(value = "products", allEntries = true)
+    @Caching(evict = {
+        @CacheEvict(value = "product", allEntries = true),
+        @CacheEvict(value = "products", allEntries = true)
+    })
     public void batchUpdatePrices(List<Integer> ids, double percentage) {
+        cartService.invalidateAllCaches();
         for (Integer id : ids) {
             Product product = productRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Product not found: " + id));
